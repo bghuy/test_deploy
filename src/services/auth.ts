@@ -14,12 +14,23 @@ export const checkAuth = async () => {
 
 export const LoginByCredentials = async (email: string, password: string) => {
     try {
-        const response = await axios.post("/auth/login", {
-            email,
-            password,
-        });
-        return response.data;
+      const response = await fetch('/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
     } catch (error) {
-        throw error;
+      throw error;
     }
-};
+  };
+  
