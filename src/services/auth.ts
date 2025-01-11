@@ -29,7 +29,8 @@ export const LoginByCredentials = async (email: string, password: string) => {
       }
   
       const data = await response.json();
-      return data;
+      console.log(data,"data");
+      return data.data;
     } catch (error) {
       throw error;
     }
