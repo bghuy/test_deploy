@@ -13,24 +13,12 @@ export const checkAuth = async () => {
 };
 
 export const LoginByCredentials = async (email: string, password: string) => {
-    const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.env.NEXT_PUBLIC_SERVER_PRODUCTION_URL : process.env.NEXT_PUBLIC_SERVER_DEVELOPMENT_URL;
     try {
-      const response = await fetch(`${baseURL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      console.log(data,"data");
-      return data.data;
+        const response = await axios.post("/auth/login", {
+            email,
+            password
+        });
+        return response.data;;
     } catch (error) {
       throw error;
     }
