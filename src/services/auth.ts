@@ -1,8 +1,7 @@
-import axios from "axios";
-import axiosInstance from "@/setup/axios";
+import axios from "@/setup/axios";
 export const checkAuth = async () => {
     try {
-        const response = await axiosInstance.get("/auth/profile");
+        const response = await axios.get("/auth/profile");
         return response.data;
     } catch (error) {
         if (error instanceof Error) {
@@ -14,15 +13,23 @@ export const checkAuth = async () => {
 };
 
 export const LoginByCredentials = async (email: string, password: string) => {
+    const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.env.NEXT_PUBLIC_SERVER_PRODUCTION_URL : process.env.NEXT_PUBLIC_SERVER_DEVELOPMENT_URL;
     try {
-      const response = await axios.post('/auth/login', {
-        email,
-        password,
-      }, {
-        withCredentials: true,
+      const response = await fetch(`${baseURL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
   
-      return response.data;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
     } catch (error) {
       throw error;
     }
