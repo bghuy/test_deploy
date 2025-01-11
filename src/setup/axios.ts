@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import Cookies from 'js-cookie';
+import * as jwt_decode from 'jwt-decode';
 const isServer = typeof window === 'undefined';
 
 
@@ -39,8 +40,26 @@ axiosInstance.interceptors.request.use(
 
 // Response Interceptor
 axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log(response,);
+  async (response) => {
+    if (response.headers['refresh_token']) {
+      const refreshToken = response.headers['refresh_token'];
+      
+      try {
+        const decodedToken: { exp: number } = jwt_decode.jwtDecode(refreshToken);
+        const exp = decodedToken.exp;
+
+        if (!isServer) {
+          Cookies.set('refresh_token', refreshToken, { expires: new Date(exp * 1000) });
+          console.log('Refresh token and expiration time set successfully on client');
+        } else {
+          const { setCookie } = await import('cookies-next');
+          setCookie('refresh_token', refreshToken, { maxAge: exp * 1000, httpOnly: true });
+          console.log('Refresh token set successfully on server');
+        }
+      } catch (error) {
+        console.error('Error decoding refresh_token:', error);
+      }
+    }
     
     return response.data;
   },

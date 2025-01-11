@@ -6,8 +6,8 @@ import { match } from 'path-to-regexp';
 import { NextResponse, NextRequest } from 'next/server'; 
 // import jwt from 'jsonwebtoken';
 import { decodeJwt } from 'jose';
-const isEdgeRuntime = process.env.NEXT_RUNTIME === 'edge'
-export const runtime = isEdgeRuntime ? 'edge' : 'nodejs'
+
+export const runtime = process.env.NEXT_RUNTIME === 'edge' ? 'edge' : 'nodejs';
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.env.NEXT_PUBLIC_SERVER_PRODUCTION_URL : process.env.NEXT_PUBLIC_SERVER_DEVELOPMENT_URL;
 
