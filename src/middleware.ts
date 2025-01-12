@@ -75,6 +75,8 @@ export async function middleware(req: NextRequest) {
         const response = NextResponse.next();
         const accessToken = req.cookies.get('access_token')?.value
         const refreshToken = req.cookies.get('refresh_token')?.value
+        console.log(accessToken,"accessToken");
+        console.log(refreshToken,"refreshToken");
         if(!accessToken) {
             if(!refreshToken) return NextResponse.redirect(new URL("/auth/login", nextUrl));
             try {
