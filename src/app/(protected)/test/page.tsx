@@ -18,13 +18,11 @@ export default function TestPage () {
 
         const response2 = await axiosInstance.get('/auth/test-cookie');
         console.log(response2.data, "data2");
-        
-        const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.env.NEXT_PUBLIC_SERVER_PRODUCTION_URL : process.env.NEXT_PUBLIC_SERVER_DEVELOPMENT_URL;
-        const response3 = await fetch(`${baseURL}/auth/refresh-token`, {
+
+        const response3 = await fetch(`https://chat-asp-api.vercel.app/auth/refresh-token`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                "Access-Control-Allow-Credentials": "true",
             },
             credentials: 'include',
         });
