@@ -13,7 +13,24 @@ const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.e
 
 const getNewAccessToken = async (refreshToken: string) => {
     try {
-        if(!refreshToken) throw new Error("Invalid access token");
+        if(!refreshToken) {
+            const response = await fetch(`${baseURL}/auth/refresh-token`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Credentials": "true",
+                },
+                credentials: 'include',
+            });
+            const data = await response.json();
+            console.log(data,"data");
+            
+            const newAccessToken = data?.data?.access_token;
+        
+            if(!newAccessToken) throw new Error("Access token not found");
+            return newAccessToken;
+            // throw new Error("Invalid access token");
+        } 
 
         const response = await fetch(`${baseURL}/auth/refresh-token`, {
             method: 'GET',
