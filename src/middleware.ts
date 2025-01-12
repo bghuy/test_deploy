@@ -19,6 +19,7 @@ const getNewAccessToken = async (refreshToken: string) => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                "Access-Control-Allow-Credentials": "true",
                 'Cookie': `refresh_token=${refreshToken}`,
             },
             credentials: 'include',
@@ -34,7 +35,6 @@ const getNewAccessToken = async (refreshToken: string) => {
         throw error;
     }
 };
-
 const checkValidAccessToken = async (accessToken: string) => {
     try {
         if (!accessToken) throw new Error("Access token is missing");
