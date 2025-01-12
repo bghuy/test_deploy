@@ -13,24 +13,7 @@ const baseURL = process.env.NEXT_PUBLIC_SERVER_MODE === 'production' ? process.e
 
 const getNewAccessToken = async (refreshToken: string) => {
     try {
-        if(!refreshToken) {
-            const response = await fetch(`${baseURL}/auth/refresh-token`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    "Access-Control-Allow-Credentials": "true",
-                },
-                credentials: 'include',
-            });
-            const data = await response.json();
-            console.log(data,"data");
-            
-            const newAccessToken = data?.data?.access_token;
-        
-            if(!newAccessToken) throw new Error("Access token not found");
-            return newAccessToken;
-            // throw new Error("Invalid access token");
-        } 
+        if(!refreshToken) throw new Error("Invalid access token");
 
         const response = await fetch(`${baseURL}/auth/refresh-token`, {
             method: 'GET',
@@ -95,7 +78,22 @@ export async function middleware(req: NextRequest) {
         console.log(accessToken,"accessToken");
         console.log(refreshToken,"refreshToken");
         if(!accessToken) {
-            if(!refreshToken) return NextResponse.redirect(new URL("/auth/login", nextUrl));
+            if(!refreshToken){
+                const response = await fetch(`${baseURL}/auth/refresh-token`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Credentials": "true",
+                    },
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                console.log(data.data.access_token,"data");
+                const newAccessToken = data?.data?.access_token;
+                const decodedToken = decodeJwt(newAccessToken);
+                console.log(decodedToken,"decodedToken");
+                return NextResponse.redirect(new URL("/auth/login", nextUrl));
+            } 
             try {
                 const newAccessToken = await getNewAccessToken(refreshToken as string);
                 // const decodedToken = jwt.decode(newAccessToken) as jwt.JwtPayload;
